@@ -18,8 +18,8 @@ read_image <- function(path) {
   )
   
   ggplot() +
-    annotation_raster(img, -Inf, Inf, -Inf, Inf) +
-    coord_fixed() +  # ← THIS is the key
+    annotation_raster(img, 0, 1, 0, 1) +  # ← fixed 0–1 square
+    coord_fixed(xlim = c(0, 1), ylim = c(0, 1), expand = FALSE) +
     theme_void() +
     theme(plot.margin = margin(0, 0, 0, 0))
 }
@@ -29,7 +29,7 @@ add_top_label <- function(plot, label) {
   label_plot <- ggdraw() +
     draw_label(label,
                x = 0, y = 0.5,
-               hjust = 0,
+               hjust = 0,   # left align
                fontface = "bold",
                size = 14)
   
@@ -37,6 +37,8 @@ add_top_label <- function(plot, label) {
     label_plot,
     plot,
     ncol = 1,
+    align = "v",   # ← important
+    axis = "l",    # ← forces left alignment
     rel_heights = c(0.12, 1)
   )
 }
@@ -80,5 +82,5 @@ final_plot <- plot_grid(
 )
 
 # ---- Export ----
-ggsave("multipanel.pdf", final_plot, width = 12, height = 6)
-ggsave("multipanel.svg", final_plot, width = 12, height = 6)
+ggsave("multipanel.pdf", final_plot, width = 12, height = 8)
+ggsave("multipanel.svg", final_plot, width = 12, height = 8)
