@@ -5,7 +5,14 @@ library(jpeg)
 library(grid)
 library(svglite)
 
-# ---- Read image (NO margins now) ----
+# ---- SETTINGS ----
+ncol_panels <- 4
+nrow_panels <- 2
+
+hgap_frac <- 0.06   # horizontal gap as fraction of panel
+vgap_frac <- 0.06   # vertical gap as fraction of panel
+
+# ---- Read image (square, no distortion) ----
 read_image <- function(path) {
   ext <- tolower(tools::file_ext(path))
   
@@ -18,22 +25,21 @@ read_image <- function(path) {
   )
   
   ggplot() +
-    annotation_raster(img, 0, 1, 0, 1) +  # ← fixed 0–1 square
-    coord_fixed(xlim = c(0, 1), ylim = c(0, 1), expand = FALSE) +
+    annotation_raster(img, -Inf, Inf, -Inf, Inf) +
+    coord_fixed() +
     theme_void() +
     theme(plot.margin = margin(0, 0, 0, 0))
 }
 
-# ---- Label + image block ----
+# ---- Label above image (tight, no spacing artifacts) ----
 add_top_label <- function(plot, label) {
-  
   ggdraw() +
     draw_label(label,
                x = 0, y = 1,
                hjust = 0, vjust = 1,
                fontface = "bold",
                size = 14) +
-    draw_plot(plot, y = 0.1, height = 0.93)
+    draw_plot(plot, y = 0, height = 0.94)  # ← controls label gap
 }
 
 # ---- Files ----
@@ -50,30 +56,40 @@ labeled <- mapply(add_top_label,
                   LETTERS[1:length(plots)],
                   SIMPLIFY = FALSE)
 
-# ---- Helper: row with spacing ----
-make_row <- function(row_plots, hgap = 0.05) {
+# ---- Helper: row with proportional spacing ----
+make_row <- function(row_plots, hgap_frac) {
+  n <- length(row_plots)
+  
   plot_grid(
     plotlist = unlist(
       Map(function(p) list(p, NULL), row_plots),
       recursive = FALSE
-    )[-(length(row_plots)*2)],  # remove last NULL
+    )[-(2*n)],
     nrow = 1,
-    rel_widths = rep(c(1, hgap), length(row_plots))[-(length(row_plots)*2)]
+    rel_widths = rep(c(1, hgap_frac), n)[-(2*n)]
   )
 }
 
-row1 <- make_row(labeled[1:4], hgap = 0.08)
-row2 <- make_row(labeled[5:8], hgap = 0.08)
+# ---- Build rows ----
+row1 <- make_row(labeled[1:4], hgap_frac)
+row2 <- make_row(labeled[5:8], hgap_frac)
 
-# ---- Combine rows with vertical spacing ----
+# ---- Combine rows with proportional vertical spacing ----
 final_plot <- plot_grid(
   row1,
   NULL,
   row2,
   ncol = 1,
-  rel_heights = c(1, 0.12, 1)  # ← vertical gap
+  rel_heights = c(1, vgap_frac, 1)
 )
 
-# ---- Export ----
-ggsave("multipanel.pdf", final_plot, width = 12, height = 8)
-ggsave("multipanel.svg", final_plot, width = 12, height = 8)
+# ---- Compute correct figure aspect ratio ----
+total_width_units  <- ncol_panels + (ncol_panels - 1) * hgap_frac
+total_height_units <- nrow_panels + (nrow_panels - 1) * vgap_frac
+
+width <- 12
+height <- width * (total_height_units / total_width_units)
+
+# ---- Save ----
+ggsave("multipanel.pdf", final_plot, width = width, height = height)
+ggsave("multipanel.svg", final_plot, width = width, height = height)
