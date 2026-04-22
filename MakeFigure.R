@@ -2,10 +2,9 @@ library(cowplot)
 library(ggplot2)
 library(png)
 library(jpeg)
-library(grid)
 library(svglite)
 
-# ---- Read image ----
+# ---- Read image with padding ----
 read_image <- function(path) {
   ext <- tolower(tools::file_ext(path))
   
@@ -18,9 +17,9 @@ read_image <- function(path) {
   )
   
   ggplot() +
-    annotation_raster(img, -0.95, 0.95, -0.95, 0.95) +
+    annotation_raster(img, -Inf, Inf, -Inf, Inf) +
     theme_void() +
-    theme(plot.margin = margin(0, 0, 0, 0))
+    theme(plot.margin = margin(12, 12, 12, 12))  # ← spacing around each image
 }
 
 # ---- Save helper ----
@@ -48,64 +47,17 @@ files <- c(
 
 plots <- lapply(files, read_image)
 
-# ---- spacing parameters ----
-hgap <- 0.03
-vgap <- 0.06
-
-# ---- helper to build one row with spacing ----
-make_row <- function(p1, p2, p3, p4) {
-  plot_grid(
-    p1, NULL,
-    p2, NULL,
-    p3, NULL,
-    p4,
-    nrow = 1,
-    rel_widths = c(1, hgap, 1, hgap, 1, hgap, 1)
-  )
-}
-
-row1 <- make_row(plots[[1]], plots[[2]], plots[[3]], plots[[4]])
-row2 <- make_row(plots[[5]], plots[[6]], plots[[7]], plots[[8]])
-
-# ---- combine rows ----
-panel <- plot_grid(
-  row1,
-  NULL,
-  row2,
-  ncol = 1,
-  rel_heights = c(1, vgap, 1)
+# ---- Layout ----
+final_plot <- plot_grid(
+  plotlist = plots,
+  ncol = 4,                      # 4 columns → 2 rows automatically
+  labels = "AUTO",               # A, B, C, ...
+  label_size = 14,
+  label_x = 0.02,
+  label_y = 0.98,
+  hjust = 0,
+  vjust = 1
 )
 
-# ---- ADD LABELS AS REAL GROBS (key trick) ----
-labels <- paste0(LETTERS[1:8])
-
-label_grobs <- lapply(labels, function(lab) {
-  textGrob(
-    lab,
-    x = unit(0, "npc"),
-    y = unit(1, "npc"),
-    just = c("left", "top"),
-    gp = gpar(fontsize = 14, fontface = "bold")
-  )
-})
-
-# ---- attach labels via annotation (stable) ----
-final_plot <- ggdraw(panel) +
-  draw_plot(panel)
-
-# manually overlay labels in stable positions
-final_plot <- ggdraw() +
-  draw_plot(panel) +
-  plot_grid(panel, labels = LETTERS[1:8])
-#  draw_label("A", x = 0.01, y = 0.99, hjust = 0, vjust = 1, fontface = "bold", size = 14) +
-#  draw_label("B", x = 0.26, y = 0.99, hjust = 0, vjust = 1, fontface = "bold", size = 14) +
-#  draw_label("C", x = 0.51, y = 0.99, hjust = 0, vjust = 1, fontface = "bold", size = 14) +
-#  draw_label("D", x = 0.76, y = 0.99, hjust = 0, vjust = 1, fontface = "bold", size = 14) +
-
-#  draw_label("E", x = 0.01, y = 0.49, hjust = 0, vjust = 1, fontface = "bold", size = 14) +
-#  draw_label("F", x = 0.26, y = 0.49, hjust = 0, vjust = 1, fontface = "bold", size = 14) +
-#  draw_label("G", x = 0.51, y = 0.49, hjust = 0, vjust = 1, fontface = "bold", size = 14) +
-#  draw_label("H", x = 0.76, y = 0.49, hjust = 0, vjust = 1, fontface = "bold", size = 14)
-
-# ---- export ----
+# ---- Export ----
 save_figure(final_plot, "multipanel", width = 12, height = 6)
