@@ -1,0 +1,5 @@
+*.svg
+*.pdf
+.Rhistory
+*.pptx
+Thumbs.db
