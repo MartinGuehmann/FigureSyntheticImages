@@ -26,21 +26,14 @@ read_image <- function(path) {
 
 # ---- Label + image block ----
 add_top_label <- function(plot, label) {
-  label_plot <- ggdraw() +
-    draw_label(label,
-               x = 0, y = 0.5,
-               hjust = 0,   # left align
-               fontface = "bold",
-               size = 14)
   
-  plot_grid(
-    label_plot,
-    plot,
-    ncol = 1,
-    align = "v",   # ← important
-    axis = "l",    # ← forces left alignment
-    rel_heights = c(0.12, 1)
-  )
+  ggdraw() +
+    draw_label(label,
+               x = 0, y = 1,
+               hjust = 0, vjust = 1,
+               fontface = "bold",
+               size = 14) +
+    draw_plot(plot, y = 0.1, height = 0.93)
 }
 
 # ---- Files ----
