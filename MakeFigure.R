@@ -9,11 +9,11 @@ library(svglite)
 ncol_panels <- 4
 nrow_panels <- 2
 
-hgap_frac <- 0.06   # horizontal gap as fraction of panel
-vgap_frac <- 0.06   # vertical gap as fraction of panel
+hgap_frac <- 0.06
+vgap_frac <- 0.06
 
-# ---- Read image (square, no distortion) ----
-read_image <- function(path) {
+# ---- Read image as grob (fills panel exactly) ----
+read_image_grob <- function(path) {
   ext <- tolower(tools::file_ext(path))
   
   img <- switch(
@@ -24,22 +24,26 @@ read_image <- function(path) {
     stop("Unsupported format")
   )
   
-  ggplot() +
-    annotation_raster(img, -Inf, Inf, -Inf, Inf) +
-    coord_fixed() +
-    theme_void() +
-    theme(plot.margin = margin(0, 0, 0, 0))
+  rasterGrob(
+    img,
+    interpolate = TRUE,
+    width = unit(1, "npc"),
+    height = unit(1, "npc")  # ensures full fill (no centering)
+  )
 }
 
-# ---- Label above image (tight, no spacing artifacts) ----
-add_top_label <- function(plot, label) {
+# ---- Label above image (perfect alignment) ----
+add_top_label <- function(img_grob, label) {
   ggdraw() +
     draw_label(label,
                x = 0, y = 1,
                hjust = 0, vjust = 1,
                fontface = "bold",
                size = 14) +
-    draw_plot(plot, y = 0, height = 0.94)  # ← controls label gap
+    draw_grob(img_grob,
+              x = 0, y = 0,
+              width = 1,
+              height = 0.94)   # adjust to control label gap
 }
 
 # ---- Files ----
@@ -48,12 +52,12 @@ files <- c(
   "08.jpg","1_5i.png","2_5i.png","3_5i.png"
 )
 
-plots <- lapply(files, read_image)
+# ---- Load + label ----
+grobs <- lapply(files, read_image_grob)
 
-# ---- Add labels ----
 labeled <- mapply(add_top_label,
-                  plots,
-                  LETTERS[1:length(plots)],
+                  grobs,
+                  LETTERS[1:length(grobs)],
                   SIMPLIFY = FALSE)
 
 # ---- Helper: row with proportional spacing ----
@@ -74,7 +78,7 @@ make_row <- function(row_plots, hgap_frac) {
 row1 <- make_row(labeled[1:4], hgap_frac)
 row2 <- make_row(labeled[5:8], hgap_frac)
 
-# ---- Combine rows with proportional vertical spacing ----
+# ---- Combine rows ----
 final_plot <- plot_grid(
   row1,
   NULL,
@@ -83,7 +87,7 @@ final_plot <- plot_grid(
   rel_heights = c(1, vgap_frac, 1)
 )
 
-# ---- Compute correct figure aspect ratio ----
+# ---- Compute correct aspect ratio ----
 total_width_units  <- ncol_panels + (ncol_panels - 1) * hgap_frac
 total_height_units <- nrow_panels + (nrow_panels - 1) * vgap_frac
 
