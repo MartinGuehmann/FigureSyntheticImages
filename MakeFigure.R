@@ -19,8 +19,9 @@ read_image <- function(path) {
   
   ggplot() +
     annotation_raster(img, -Inf, Inf, -Inf, Inf) +
+    coord_fixed() +  # ← THIS is the key
     theme_void() +
-    theme(plot.margin = margin(0, 0, 0, 0))  # ← no internal spacing
+    theme(plot.margin = margin(0, 0, 0, 0))
 }
 
 # ---- Label + image block ----
