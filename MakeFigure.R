@@ -176,7 +176,7 @@ add_top_label <- function(img_grob, label, img_fraction, label_gap = 0.01) {
 #' @param head_length Numeric. Relative length of arrow head (0–1 scale).
 #' @param body_height Numeric. Thickness of the arrow body.
 #' @param img_fraction Numeric. Vertical alignment reference to image layout.
-#' @param text_y_offset Numeric. Fine adjustment for vertical text position.
+#' @param y_text_offset Numeric. Fine adjustment for vertical text position.
 #'
 #' @return A `ggplot` object representing the arrow.
 #'
@@ -189,7 +189,7 @@ make_arrow_grob <- function(label = "Synthesize",
                             head_length = 0.2,
                             body_height = 0.15,
                             img_fraction = 0.92,
-                            text_y_offset = 0.0) {
+                            y_text_offset = 0.0) {
   
   # ---- alignment with image region ----
   y_mid <- img_fraction / 2
@@ -226,7 +226,7 @@ make_arrow_grob <- function(label = "Synthesize",
     geom_polygon(fill = fill, colour = outline_colour) +
     annotate("text",
              x = (x_left + x_head_start) / 2,
-             y = y_mid + text_y_offset,
+             y = y_mid + y_text_offset,
              label = label,
              color = text_color,
              fontface = "bold",
@@ -299,7 +299,7 @@ add_scalebar <- function(plot,
   
   # vertical position
   y_pos <- y_offset * image_height
-  text_y <- y_pos + text_offset * image_height
+  y_text <- y_pos + text_offset * image_height
   
   # horizontal placement
   if (anchor == "left") {
@@ -319,7 +319,7 @@ add_scalebar <- function(plot,
   x_min <- x_start - bg_padding
   x_max <- x_end + bg_padding
   y_min <- y_pos - bg_padding
-  y_max <- text_y + text_height_est + bg_padding
+  y_max <- y_text + text_height_est + bg_padding
 
     bg <- rectGrob(
     x = (x_min + x_max) / 2,
@@ -344,7 +344,7 @@ add_scalebar <- function(plot,
     draw_label(
       label,
       x = x_text,
-      y = text_y,
+      y = y_text,
       size = text_size,
       color = color,
       vjust = 0
