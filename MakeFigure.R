@@ -287,9 +287,12 @@ add_scalebar <- function(plot,
   
   anchor <- match.arg(anchor)
   
-  # actual image height
+  # actual image height and width
   image_height <- img_fraction - label_gap
   image_width  <- img_fraction - label_gap
+  
+  # The displayed image width is shrunken
+  bar_width <- bar_width * image_width
   
   # vertical position inside image
   y_pos <- y_offset * image_height
