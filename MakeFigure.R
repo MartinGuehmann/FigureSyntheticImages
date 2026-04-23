@@ -273,25 +273,34 @@ make_row <- function(row_plots, hgap_frac) {
 }
 
 add_scalebar <- function(plot,
-                         bar_width = 0.5,      # fraction of image width
-                         bar_height = 0.015,   # thickness
-                         x_offset = 0.05,      # left margin
-                         y_offset = 0.05,      # bottom margin
+                         img_fraction,
+                         label_gap = 0.01,
+                         bar_width = 0.5,
+                         bar_height = 0.015,
+                         x_offset = 0.05,
+                         y_offset = 0.05,
                          label = "100 µm",
-                         text_size = 5
+                         text_size = 5,
+                         text_offset = 0.04,
                          color = "white") {
+  
+  # actual image height (same logic as add_top_label)
+  image_height <- img_fraction - label_gap
+  
+  # map y_offset into image region
+  y_pos <- y_offset * image_height
   
   plot +
     draw_line(
       x = c(x_offset, x_offset + bar_width),
-      y = c(y_offset, y_offset),
+      y = c(y_pos, y_pos),
       size = 1.2,
       color = color
     ) +
     draw_label(
       label,
       x = x_offset + bar_width / 2,
-      y = y_offset + 0.04,
+      y = y_pos + text_offset * image_height,
       size = text_size,
       color = color,
       vjust = 0
