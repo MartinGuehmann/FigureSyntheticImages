@@ -289,6 +289,7 @@ add_scalebar <- function(plot,
   
   # actual image height
   image_height <- img_fraction - label_gap
+  image_width  <- img_fraction - label_gap
   
   # vertical position inside image
   y_pos <- y_offset * image_height
@@ -299,7 +300,7 @@ add_scalebar <- function(plot,
     x_end   <- x_offset + bar_width
     x_text  <- x_offset + bar_width / 2
   } else {
-    x_end   <- 1 - x_offset
+    x_end   <- image_width - x_offset
     x_start <- x_end - bar_width
     x_text  <- x_start + bar_width / 2
   }
