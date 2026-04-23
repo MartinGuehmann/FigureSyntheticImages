@@ -25,15 +25,6 @@ if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable())
 setwd(script_dir)
 cat("Working directory set to:", getwd(), "\n")
 
-# ---- SETTINGS ----
-ncol_panels <- 5
-nrow_panels <- 2
-
-hgap_frac <- 0.06
-vgap_frac <- 0.06
-
-img_fraction <- 0.92
-
 # ---- Read image as grob (fills panel exactly) ----
 read_image_grob <- function(path) {
   ext <- tolower(tools::file_ext(path))
@@ -76,21 +67,6 @@ add_top_label <- function(img_grob, label, img_fraction, label_gap = 0.01) {
               height = image_height)
 }
 
-# ---- Files ----
-files <- c(
-  "07.jpg","1_3i.png","2_3i.png","3_3i.png",
-  "08.jpg","1_5i.png","2_5i.png","3_5i.png"
-)
-
-# ---- Load + label ----
-grobs <- lapply(files, read_image_grob)
-
-labeled <- mapply(add_top_label,
-                  grobs,
-                  LETTERS[1:length(grobs)],
-                  img_fraction,
-                  SIMPLIFY = FALSE)
-
 make_arrow_grob <- function(label = "Synthesize",
                             fill = "black",
                             outline_colour = "black",
@@ -102,7 +78,7 @@ make_arrow_grob <- function(label = "Synthesize",
   
   # ---- alignment with image region ----
   y_mid <- img_fraction / 2
-
+  
   # ---- geometry ----
   x_left  <- 0.05
   x_right <- 0.95
@@ -157,6 +133,32 @@ make_row <- function(row_plots, hgap_frac) {
     rel_widths = rep(c(1, hgap_frac), n)[-(2*n)]
   )
 }
+
+
+# ---- SETTINGS ----
+ncol_panels <- 5
+nrow_panels <- 2
+
+hgap_frac <- 0.06
+vgap_frac <- 0.06
+
+img_fraction <- 0.92
+
+
+# ---- Files ----
+files <- c(
+  "07.jpg","1_3i.png","2_3i.png","3_3i.png",
+  "08.jpg","1_5i.png","2_5i.png","3_5i.png"
+)
+
+# ---- Load + label ----
+grobs <- lapply(files, read_image_grob)
+
+labeled <- mapply(add_top_label,
+                  grobs,
+                  LETTERS[1:length(grobs)],
+                  img_fraction,
+                  SIMPLIFY = FALSE)
 
 # ---- Add arrows to grobs ----
 arrow <- make_arrow_grob()
