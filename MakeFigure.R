@@ -313,7 +313,7 @@ add_scalebar <- function(plot,
   x_text <- (x_start + x_end) / 2
   
   # estimate text height (empirical but stable)
-  text_height_est <- 0.04 * image_height
+  text_height_est <- 0.05 * image_height
   
   # ---- background box bounds ----
   x_min <- x_start - bg_padding
