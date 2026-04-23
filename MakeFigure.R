@@ -32,7 +32,7 @@ nrow_panels <- 2
 hgap_frac <- 0.06
 vgap_frac <- 0.06
 
-img_fraction <- 0.94
+img_fraction <- 0.92
 
 # ---- Read image as grob (fills panel exactly) ----
 read_image_grob <- function(path) {
@@ -55,17 +55,25 @@ read_image_grob <- function(path) {
 }
 
 # ---- Label above image (perfect alignment) ----
-add_top_label <- function(img_grob, label, img_fraction) {
+add_top_label <- function(img_grob, label, img_fraction, label_gap = 0.01) {
+  
+  image_height <- img_fraction - label_gap
+  
   ggdraw() +
+    
+    # label (top-left, fixed)
     draw_label(label,
                x = 0, y = 1,
                hjust = 0, vjust = 1,
                fontface = "bold",
-               size = 14) +
+               size = 18) +
+    
+    # image pushed slightly downward to create real gap
     draw_grob(img_grob,
-              x = 0, y = 0,
-              width = 1,
-              height = img_fraction)   # adjust to control label gap
+              x = 0,
+              y = 0,
+              width = image_height,
+              height = image_height)
 }
 
 # ---- Files ----
@@ -88,8 +96,8 @@ make_arrow_grob <- function(label = "Synthesize",
                             outline_colour = "black",
                             text_color = "white",
                             head_length = 0.2,
-                            body_height = 0.1,
-                            img_fraction = 0.94,
+                            body_height = 0.15,
+                            img_fraction = 0.92,
                             text_y_offset = 0.0) {
   
   # ---- alignment with image region ----
@@ -131,7 +139,7 @@ make_arrow_grob <- function(label = "Synthesize",
              label = label,
              color = text_color,
              fontface = "bold",
-             size = 5) +
+             size = 6) +
     theme_void() +
     coord_cartesian(xlim = c(0, 1), ylim = c(0, 1), expand = FALSE)
 }
