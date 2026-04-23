@@ -26,7 +26,7 @@ setwd(script_dir)
 cat("Working directory set to:", getwd(), "\n")
 
 # ---- SETTINGS ----
-ncol_panels <- 4
+ncol_panels <- 5
 nrow_panels <- 2
 
 hgap_frac <- 0.06
@@ -80,6 +80,17 @@ labeled <- mapply(add_top_label,
                   LETTERS[1:length(grobs)],
                   SIMPLIFY = FALSE)
 
+make_arrow_grob <- function() {
+  ggplot() +
+    geom_segment(
+      aes(x = 0, xend = 1, y = 0.5, yend = 0.5),
+      arrow = arrow(length = unit(4, "mm")),
+      linewidth = 1
+    ) +
+    theme_void() +
+    coord_cartesian(xlim = c(0, 1), ylim = c(0, 1), expand = FALSE)
+}
+
 # ---- Helper: row with proportional spacing ----
 make_row <- function(row_plots, hgap_frac) {
   n <- length(row_plots)
@@ -94,9 +105,15 @@ make_row <- function(row_plots, hgap_frac) {
   )
 }
 
+# ---- Add arrows to grobs ----
+arrow <- make_arrow_grob()
+
+row1_plots <- append(labeled[1:4], list(arrow), after = 1)
+row2_plots <- append(labeled[5:8], list(arrow), after = 1)
+
 # ---- Build rows ----
-row1 <- make_row(labeled[1:4], hgap_frac)
-row2 <- make_row(labeled[5:8], hgap_frac)
+row1 <- make_row(row1_plots, hgap_frac)
+row2 <- make_row(row2_plots, hgap_frac)
 
 # ---- Combine rows ----
 final_plot <- plot_grid(
