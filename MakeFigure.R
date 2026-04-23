@@ -420,6 +420,9 @@ vgap_frac <- 0.06
 
 img_fraction <- 0.92
 
+error_bar_label <- "50 µm"
+error_bar_width <- (181.5 / 344.3) * 0.5
+
 # ---- Files ----
 files <- c(
   "07.jpg","1_3i.png","2_3i.png","3_3i.png",
@@ -444,7 +447,8 @@ labeled <- mapply(add_top_label,
 labeled[[1]] <- add_scalebar(
   labeled[[1]],
   img_fraction = img_fraction,
-  label = "100 µm",
+  label = error_bar_label,
+  bar_width = error_bar_width,
   anchor = "right"
 )
 
