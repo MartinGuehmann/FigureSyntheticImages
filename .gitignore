@@ -2,5 +2,6 @@
 *.pdf
 .Rhistory
 .RDataTmp
+.RDataTmp1
 *.pptx
 Thumbs.db
