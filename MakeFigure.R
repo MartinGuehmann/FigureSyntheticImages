@@ -1,10 +1,11 @@
-#' Generate multipanel figure with labeled image grid and directional arrows
+#' Generate multipanel figure with labeled image grid, scalebars, and directional arrows
 #'
 #' This script constructs a multipanel figure from a set of input images.
-#' Each image is rendered as a square raster panel with a left-aligned label
-#' above it. Panels are arranged in a grid with configurable horizontal and
-#' vertical spacing. Directional arrow annotations are inserted between
-#' selected panels to indicate a workflow or transformation sequence.
+#' Each image is rendered as a square raster region within a panel with a
+#' left-aligned label above it. Panels are arranged in a grid with configurable
+#' horizontal and vertical spacing. Optional scalebar annotations can be added
+#' to selected panels. Directional arrow annotations are inserted between
+#' panels to indicate a workflow or transformation sequence.
 #'
 #' The final figure is exported in both PDF and SVG formats with a fixed
 #' aspect ratio derived from the panel layout configuration.
@@ -13,10 +14,11 @@
 #' 1. Read image files from working directory
 #' 2. Convert images into raster grobs
 #' 3. Add labels above each image panel
-#' 4. Insert directional arrow annotation grobs
-#' 5. Arrange panels into rows with controlled spacing
-#' 6. Combine rows into final multipanel layout
-#' 7. Export figure to PDF and SVG
+#' 4. Optionally overlay scalebar annotations on selected panels
+#' 5. Insert directional arrow annotation grobs
+#' 6. Arrange panels into rows with controlled spacing
+#' 7. Combine rows into final multipanel layout
+#' 8. Export figure to PDF and SVG
 #'
 #' @section Layout parameters:
 #' - `ncol_panels`: Number of image panels per row
@@ -30,8 +32,8 @@
 #' Supported formats: PNG, JPG, JPEG.
 #'
 #' @section Output:
-#' - multipanel.pdf
-#' - multipanel.svg
+#' - <output_file_name_base>.pdf
+#' - <output_file_name_base>.svg
 #'
 #' @section Dependencies:
 #' - cowplot
@@ -44,7 +46,12 @@
 #' @section Notes:
 #' - Image aspect ratio is preserved via raster grobs and controlled panel sizing.
 #' - Spacing is implemented via explicit layout manipulation in `cowplot::plot_grid()`.
-#' - Arrow alignment depends on `img_fraction` and assumes fixed panel geometry.
+#' - Layout elements (labels, arrows, scalebars) rely on a shared coordinate
+#'   system defined by `img_fraction` and `label_gap`.
+#' - The image region is assumed to be square and anchored to the bottom-left
+#'   of each panel.
+#' - Scalebars are positioned relative to the image region and scale with
+#'   panel dimensions; their physical meaning depends on user-provided calibration.
 #'
 #' @export
 NULL
