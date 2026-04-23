@@ -282,24 +282,38 @@ add_scalebar <- function(plot,
                          label = "100 µm",
                          text_size = 5,
                          text_offset = 0.04,
-                         color = "white") {
+                         color = "white",
+                         anchor = c("left", "right")) {
   
-  # actual image height (same logic as add_top_label)
+  anchor <- match.arg(anchor)
+  
+  # actual image height
   image_height <- img_fraction - label_gap
   
-  # map y_offset into image region
+  # vertical position inside image
   y_pos <- y_offset * image_height
+  
+  # horizontal placement
+  if (anchor == "left") {
+    x_start <- x_offset
+    x_end   <- x_offset + bar_width
+    x_text  <- x_offset + bar_width / 2
+  } else {
+    x_end   <- 1 - x_offset
+    x_start <- x_end - bar_width
+    x_text  <- x_start + bar_width / 2
+  }
   
   plot +
     draw_line(
-      x = c(x_offset, x_offset + bar_width),
+      x = c(x_start, x_end),
       y = c(y_pos, y_pos),
       size = 1.2,
       color = color
     ) +
     draw_label(
       label,
-      x = x_offset + bar_width / 2,
+      x = x_text,
       y = y_pos + text_offset * image_height,
       size = text_size,
       color = color,
@@ -341,9 +355,12 @@ labeled <- mapply(add_top_label,
                   img_fraction,
                   SIMPLIFY = FALSE)
 
-labeled[[1]] <- add_scalebar(labeled[[1]],
-                             bar_width = 0.5,
-                             label = "100 µm")
+labeled[[1]] <- add_scalebar(
+  labeled[[1]],
+  img_fraction = img_fraction,
+  label = "100 µm",
+  anchor = "right"
+)
 
 # ---- Add arrows to grobs ----
 arrow <- make_arrow_grob()
