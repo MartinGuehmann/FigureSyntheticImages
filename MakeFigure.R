@@ -49,12 +49,20 @@
 #' @export
 NULL
 
+#####################
+# Load libaries     #
+#####################
+
 library(cowplot)
 library(ggplot2)
 library(png)
 library(jpeg)
 library(grid)
 library(svglite)
+
+#####################
+# Working directory #
+#####################
 
 # Set working directory to script directory
 if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
@@ -75,6 +83,10 @@ if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable())
 # Set working directory
 setwd(script_dir)
 cat("Working directory set to:", getwd(), "\n")
+
+#####################
+# Functions         #
+#####################
 
 #' Read an image file into a raster grob
 #'
@@ -260,6 +272,9 @@ make_row <- function(row_plots, hgap_frac) {
   )
 }
 
+####################
+# Global variables #
+####################
 
 # ---- SETTINGS ----
 ncol_panels <- 5
@@ -270,7 +285,6 @@ vgap_frac <- 0.06
 
 img_fraction <- 0.92
 
-
 # ---- Files ----
 files <- c(
   "07.jpg","1_3i.png","2_3i.png","3_3i.png",
@@ -278,6 +292,10 @@ files <- c(
 )
 
 output_file_name_base <- "Figure1_SyntheticImages"
+
+####################
+# Build figure     #
+####################
 
 # ---- Load + label ----
 grobs <- lapply(files, read_image_grob)
