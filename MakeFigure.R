@@ -80,13 +80,50 @@ labeled <- mapply(add_top_label,
                   LETTERS[1:length(grobs)],
                   SIMPLIFY = FALSE)
 
-make_arrow_grob <- function() {
-  ggplot() +
-    geom_segment(
-      aes(x = 0, xend = 1, y = 0.5, yend = 0.5),
-      arrow = arrow(length = unit(4, "mm")),
-      linewidth = 1
-    ) +
+make_arrow_grob <- function(label = "Synthesize",
+                            fill = "black",
+                            text_color = "white",
+                            head_length = 0.2,   # proportion of width
+                            body_height = 0.1) { # proportion of height
+  
+  # Geometry
+  x_left  <- 0.05
+  x_right <- 0.95
+  x_head_start <- x_right - head_length
+  
+  y_mid <- 0.5
+  h <- body_height / 2
+  
+  arrow_df <- data.frame(
+    x = c(
+      x_left,
+      x_head_start,
+      x_head_start,
+      x_right,
+      x_head_start,
+      x_head_start,
+      x_left
+    ),
+    y = c(
+      y_mid - h,
+      y_mid - h,
+      y_mid - 2*h,
+      y_mid,
+      y_mid + 2*h,
+      y_mid + h,
+      y_mid + h
+    )
+  )
+  
+  ggplot(arrow_df, aes(x, y)) +
+    geom_polygon(fill = fill) +
+    annotate("text",
+             x = (x_left + x_head_start) / 2,
+             y = y_mid,
+             label = label,
+             color = text_color,
+             fontface = "bold",
+             size = 5) +
     theme_void() +
     coord_cartesian(xlim = c(0, 1), ylim = c(0, 1), expand = FALSE)
 }
