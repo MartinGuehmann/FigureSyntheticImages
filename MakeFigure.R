@@ -281,34 +281,60 @@ add_scalebar <- function(plot,
                          y_offset = 0.05,
                          label = "100 µm",
                          text_size = 10,
-                         text_offset = 0.04,
+                         text_offset = 0.03,
                          color = "white",
+                         bg_fill = "black",
+                         bg_alpha = 0.4,
+                         bg_padding = 0.02,
                          anchor = c("left", "right")) {
   
   anchor <- match.arg(anchor)
   
-  # actual image height and width
+  # image dimensions
   image_height <- img_fraction - label_gap
   image_width  <- img_fraction - label_gap
   
-  # The displayed image width is shrunken
+  # scale bar width to image
   bar_width <- bar_width * image_width
   
-  # vertical position inside image
+  # vertical position
   y_pos <- y_offset * image_height
+  text_y <- y_pos + text_offset * image_height
   
   # horizontal placement
   if (anchor == "left") {
     x_start <- x_offset
     x_end   <- x_offset + bar_width
-    x_text  <- x_offset + bar_width / 2
   } else {
     x_end   <- image_width - x_offset
     x_start <- x_end - bar_width
-    x_text  <- x_start + bar_width / 2
   }
   
+  x_text <- (x_start + x_end) / 2
+  
+  # estimate text height (empirical but stable)
+  text_height_est <- 0.04 * image_height
+  
+  # ---- background box bounds ----
+  x_min <- x_start - bg_padding
+  x_max <- x_end + bg_padding
+  y_min <- y_pos - bg_padding
+  y_max <- text_y + text_height_est + bg_padding
+
+    bg <- rectGrob(
+    x = (x_min + x_max) / 2,
+    y = (y_min + y_max) / 2,
+    width  = (x_max - x_min),
+    height = (y_max - y_min),
+    gp = gpar(
+      fill = bg_fill,
+      col = NA,
+      alpha = bg_alpha
+    )
+  )
+  
   plot +
+    draw_grob(bg) +
     draw_line(
       x = c(x_start, x_end),
       y = c(y_pos, y_pos),
@@ -318,7 +344,7 @@ add_scalebar <- function(plot,
     draw_label(
       label,
       x = x_text,
-      y = y_pos + text_offset * image_height,
+      y = text_y,
       size = text_size,
       color = color,
       vjust = 0
