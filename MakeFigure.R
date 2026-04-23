@@ -280,7 +280,7 @@ add_scalebar <- function(plot,
                          x_offset = 0.05,
                          y_offset = 0.05,
                          label = "100 µm",
-                         text_size = 5,
+                         text_size = 10,
                          text_offset = 0.04,
                          color = "white",
                          anchor = c("left", "right")) {
