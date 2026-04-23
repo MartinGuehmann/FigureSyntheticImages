@@ -272,6 +272,32 @@ make_row <- function(row_plots, hgap_frac) {
   )
 }
 
+add_scalebar <- function(plot,
+                         bar_width = 0.5,      # fraction of image width
+                         bar_height = 0.015,   # thickness
+                         x_offset = 0.05,      # left margin
+                         y_offset = 0.05,      # bottom margin
+                         label = "100 µm",
+                         text_size = 5
+                         color = "white") {
+  
+  plot +
+    draw_line(
+      x = c(x_offset, x_offset + bar_width),
+      y = c(y_offset, y_offset),
+      size = 1.2,
+      color = color
+    ) +
+    draw_label(
+      label,
+      x = x_offset + bar_width / 2,
+      y = y_offset + 0.04,
+      size = text_size,
+      color = color,
+      vjust = 0
+    )
+}
+
 ####################
 # Global variables #
 ####################
@@ -305,6 +331,10 @@ labeled <- mapply(add_top_label,
                   LETTERS[1:length(grobs)],
                   img_fraction,
                   SIMPLIFY = FALSE)
+
+labeled[[1]] <- add_scalebar(labeled[[1]],
+                             bar_width = 0.5,
+                             label = "100 µm")
 
 # ---- Add arrows to grobs ----
 arrow <- make_arrow_grob()
