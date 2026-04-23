@@ -145,6 +145,7 @@ read_image_grob <- function(path) {
 add_top_label <- function(img_grob, label, img_fraction, label_gap = 0.01) {
   
   image_height <- img_fraction - label_gap
+  image_width  <- img_fraction - label_gap
   
   ggdraw() +
     
@@ -159,7 +160,7 @@ add_top_label <- function(img_grob, label, img_fraction, label_gap = 0.01) {
     draw_grob(img_grob,
               x = 0,
               y = 0,
-              width = image_height,
+              width = image_width,
               height = image_height)
 }
 
