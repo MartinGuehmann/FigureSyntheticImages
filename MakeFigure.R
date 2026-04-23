@@ -1,3 +1,54 @@
+#' Generate multipanel figure with labeled image grid and directional arrows
+#'
+#' This script constructs a multipanel figure from a set of input images.
+#' Each image is rendered as a square raster panel with a left-aligned label
+#' above it. Panels are arranged in a grid with configurable horizontal and
+#' vertical spacing. Directional arrow annotations are inserted between
+#' selected panels to indicate a workflow or transformation sequence.
+#'
+#' The final figure is exported in both PDF and SVG formats with a fixed
+#' aspect ratio derived from the panel layout configuration.
+#'
+#' @section Pipeline overview:
+#' 1. Read image files from working directory
+#' 2. Convert images into raster grobs
+#' 3. Add labels above each image panel
+#' 4. Insert directional arrow annotation grobs
+#' 5. Arrange panels into rows with controlled spacing
+#' 6. Combine rows into final multipanel layout
+#' 7. Export figure to PDF and SVG
+#'
+#' @section Layout parameters:
+#' - `ncol_panels`: Number of image panels per row
+#' - `nrow_panels`: Number of rows in final figure
+#' - `hgap_frac`: Horizontal spacing between panels
+#' - `vgap_frac`: Vertical spacing between rows
+#' - `img_fraction`: Relative vertical space allocated to image region
+#'
+#' @section Input:
+#' The script expects a vector of image filenames in the working directory.
+#' Supported formats: PNG, JPG, JPEG.
+#'
+#' @section Output:
+#' - multipanel.pdf
+#' - multipanel.svg
+#'
+#' @section Dependencies:
+#' - cowplot
+#' - ggplot2
+#' - grid
+#' - png
+#' - jpeg
+#' - svglite
+#'
+#' @section Notes:
+#' - Image aspect ratio is preserved via raster grobs and controlled panel sizing.
+#' - Spacing is implemented via explicit layout manipulation in `cowplot::plot_grid()`.
+#' - Arrow alignment depends on `img_fraction` and assumes fixed panel geometry.
+#'
+#' @export
+NULL
+
 library(cowplot)
 library(ggplot2)
 library(png)
