@@ -25,7 +25,25 @@ if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable())
 setwd(script_dir)
 cat("Working directory set to:", getwd(), "\n")
 
-# ---- Read image as grob (fills panel exactly) ----
+#' Read an image file into a raster grob
+#'
+#' Loads an image file (PNG or JPEG) and converts it into a `rasterGrob`
+#' suitable for use in `ggplot2` or `cowplot` layouts.
+#'
+#' The image is scaled to fill the entire plotting panel without preserving
+#' margins or centering, making it suitable for tiled multipanel figures.
+#'
+#' @param path Character string. Path to the image file.
+#'
+#' @return A `grob` object representing the image.
+#'
+#' @details Supported formats are PNG and JPEG/JPG. Other formats will
+#' trigger an error.
+#'
+#' @importFrom grid rasterGrob unit
+#' @importFrom png readPNG
+#' @importFrom jpeg readJPEG
+#' @export
 read_image_grob <- function(path) {
   ext <- tolower(tools::file_ext(path))
   
@@ -45,7 +63,22 @@ read_image_grob <- function(path) {
   )
 }
 
-# ---- Label above image (perfect alignment) ----
+#' Add a left-aligned label above an image grob
+#'
+#' Combines a text label and an image into a single cowplot panel.
+#' The label is placed in the upper-left corner, and a small vertical
+#' gap is introduced between label and image for readability.
+#'
+#' @param img_grob A grob object representing an image.
+#' @param label Character string. Text label to display.
+#' @param img_fraction Numeric between 0 and 1. Fraction of panel height
+#'        allocated to the image.
+#' @param label_gap Numeric. Small vertical spacing between label and image.
+#'
+#' @return A combined `ggdraw` object containing label and image.
+#'
+#' @importFrom cowplot ggdraw draw_label draw_grob
+#' @export
 add_top_label <- function(img_grob, label, img_fraction, label_gap = 0.01) {
   
   image_height <- img_fraction - label_gap
@@ -67,6 +100,25 @@ add_top_label <- function(img_grob, label, img_fraction, label_gap = 0.01) {
               height = image_height)
 }
 
+#' Create a directional arrow annotation grob
+#'
+#' Generates a custom polygon-based arrow with centered text label.
+#' The arrow is designed to visually connect panels in multipanel figures,
+#' typically used in workflow or pipeline diagrams.
+#'
+#' @param label Character string. Text displayed inside the arrow.
+#' @param fill Fill color of the arrow body.
+#' @param outline_colour Color of the arrow outline.
+#' @param text_color Color of the label text.
+#' @param head_length Numeric. Relative length of arrow head (0–1 scale).
+#' @param body_height Numeric. Thickness of the arrow body.
+#' @param img_fraction Numeric. Vertical alignment reference to image layout.
+#' @param text_y_offset Numeric. Fine adjustment for vertical text position.
+#'
+#' @return A `ggplot` object representing the arrow.
+#'
+#' @importFrom ggplot2 ggplot aes geom_polygon annotate theme_void coord_cartesian
+#' @export
 make_arrow_grob <- function(label = "Synthesize",
                             fill = "black",
                             outline_colour = "black",
@@ -120,7 +172,30 @@ make_arrow_grob <- function(label = "Synthesize",
     coord_cartesian(xlim = c(0, 1), ylim = c(0, 1), expand = FALSE)
 }
 
-# ---- Helper: row with proportional spacing ----
+#' Assemble a horizontal row of plots with spacing
+#'
+#' Combines a list of plots (or grobs) into a single horizontal row
+#' with configurable spacing between elements. Spacing is implemented
+#' using alternating plot and empty slots via `cowplot::plot_grid()`.
+#'
+#' This function is primarily intended for constructing multipanel
+#' figures where consistent horizontal gaps between panels are required.
+#'
+#' @param row_plots A list of ggplot objects, ggdraw objects, or grobs
+#'        to be arranged in a single row.
+#' @param hgap_frac Numeric. Relative width of the horizontal gap between
+#'        adjacent panels (as a fraction of panel width).
+#'
+#' @return A `cowplot` object representing a single row of arranged plots.
+#'
+#' @details Internally, the function interleaves `NULL` placeholders between
+#' plots and uses `rel_widths` to enforce spacing. This approach allows
+#' fine-grained control over spacing without modifying individual plots.
+#' This approach is a workaround for the lack of native gap support in
+#' cowplot::plot_grid() and relies on inserting empty plot slots.
+#'
+#' @importFrom cowplot plot_grid
+#' @export
 make_row <- function(row_plots, hgap_frac) {
   n <- length(row_plots)
   
