@@ -5,6 +5,26 @@ library(jpeg)
 library(grid)
 library(svglite)
 
+# Set working directory to script directory
+if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+  # In RStudio: Path of the active script
+  script_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
+} else {
+  # Outside RStudio: Path via Rscript arguments
+  args <- commandArgs(trailingOnly = FALSE)
+  file_arg <- grep("--file=", args, value = TRUE)
+  if (length(file_arg) > 0) {
+    script_dir <- dirname(normalizePath(sub("--file=", "", file_arg)))
+  } else {
+    # Interactive or no file given: Current working directory
+    script_dir <- getwd()
+  }
+}
+
+# Set working directory
+setwd(script_dir)
+cat("Working directory set to:", getwd(), "\n")
+
 # ---- SETTINGS ----
 ncol_panels <- 4
 nrow_panels <- 2
