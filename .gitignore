@@ -1,5 +1,6 @@
 *.svg
 *.pdf
 .Rhistory
+.RDataTmp
 *.pptx
 Thumbs.db
