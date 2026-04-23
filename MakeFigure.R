@@ -32,6 +32,8 @@ nrow_panels <- 2
 hgap_frac <- 0.06
 vgap_frac <- 0.06
 
+img_fraction <- 0.94
+
 # ---- Read image as grob (fills panel exactly) ----
 read_image_grob <- function(path) {
   ext <- tolower(tools::file_ext(path))
@@ -53,7 +55,7 @@ read_image_grob <- function(path) {
 }
 
 # ---- Label above image (perfect alignment) ----
-add_top_label <- function(img_grob, label) {
+add_top_label <- function(img_grob, label, img_fraction) {
   ggdraw() +
     draw_label(label,
                x = 0, y = 1,
@@ -63,7 +65,7 @@ add_top_label <- function(img_grob, label) {
     draw_grob(img_grob,
               x = 0, y = 0,
               width = 1,
-              height = 0.94)   # adjust to control label gap
+              height = img_fraction)   # adjust to control label gap
 }
 
 # ---- Files ----
@@ -78,20 +80,25 @@ grobs <- lapply(files, read_image_grob)
 labeled <- mapply(add_top_label,
                   grobs,
                   LETTERS[1:length(grobs)],
+                  img_fraction
                   SIMPLIFY = FALSE)
 
 make_arrow_grob <- function(label = "Synthesize",
                             fill = "black",
                             text_color = "white",
-                            head_length = 0.2,   # proportion of width
-                            body_height = 0.1) { # proportion of height
+                            head_length = 0.2,
+                            body_height = 0.1,
+                            img_fraction = 0.94,
+                            text_y_offset = 0.0) {
   
-  # Geometry
+  # ---- alignment with image region ----
+  y_mid <- img_fraction / 2
+
+  # ---- geometry ----
   x_left  <- 0.05
   x_right <- 0.95
   x_head_start <- x_right - head_length
   
-  y_mid <- 0.5
   h <- body_height / 2
   
   arrow_df <- data.frame(
@@ -119,7 +126,7 @@ make_arrow_grob <- function(label = "Synthesize",
     geom_polygon(fill = fill) +
     annotate("text",
              x = (x_left + x_head_start) / 2,
-             y = y_mid,
+             y = y_mid + text_y_offset,
              label = label,
              color = text_color,
              fontface = "bold",
