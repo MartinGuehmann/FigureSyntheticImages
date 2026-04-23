@@ -277,6 +277,8 @@ files <- c(
   "08.jpg","1_5i.png","2_5i.png","3_5i.png"
 )
 
+output_file_name_base <- "Figure1_SyntheticImages"
+
 # ---- Load + label ----
 grobs <- lapply(files, read_image_grob)
 
@@ -313,5 +315,5 @@ width <- 12
 height <- width * (total_height_units / total_width_units)
 
 # ---- Save ----
-ggsave("multipanel.pdf", final_plot, width = width, height = height)
-ggsave("multipanel.svg", final_plot, width = width, height = height)
+ggsave(paste0(output_file_name_base, ".pdf"), final_plot, width = width, height = height)
+ggsave(paste0(output_file_name_base, ".svg"), final_plot, width = width, height = height)
