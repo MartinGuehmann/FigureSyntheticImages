@@ -80,11 +80,12 @@ grobs <- lapply(files, read_image_grob)
 labeled <- mapply(add_top_label,
                   grobs,
                   LETTERS[1:length(grobs)],
-                  img_fraction
+                  img_fraction,
                   SIMPLIFY = FALSE)
 
 make_arrow_grob <- function(label = "Synthesize",
                             fill = "black",
+                            outline_colour = "black",
                             text_color = "white",
                             head_length = 0.2,
                             body_height = 0.1,
@@ -123,7 +124,7 @@ make_arrow_grob <- function(label = "Synthesize",
   )
   
   ggplot(arrow_df, aes(x, y)) +
-    geom_polygon(fill = fill) +
+    geom_polygon(fill = fill, colour = outline_colour) +
     annotate("text",
              x = (x_left + x_head_start) / 2,
              y = y_mid + text_y_offset,
