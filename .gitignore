@@ -1,5 +1,7 @@
 *.svg
 *.pdf
+*.eps
+*.tiff
 .Rhistory
 .RDataTmp
 .RDataTmp1
