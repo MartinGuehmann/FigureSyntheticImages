@@ -417,6 +417,7 @@ nrow_panels <- 2
 
 hgap_frac <- 0.06
 vgap_frac <- 0.06
+top_gap_frac <- 0.06
 
 img_fraction <- 0.92
 
@@ -464,16 +465,17 @@ row2 <- make_row(row2_plots, hgap_frac)
 
 # ---- Combine rows ----
 final_plot <- plot_grid(
+  NULL,
   row1,
   NULL,
   row2,
   ncol = 1,
-  rel_heights = c(1, vgap_frac, 1)
+  rel_heights = c(top_gap_frac, 1, vgap_frac, 1)
 )
 
 # ---- Compute correct aspect ratio ----
 total_width_units  <- ncol_panels + (ncol_panels - 1) * hgap_frac
-total_height_units <- nrow_panels + (nrow_panels - 1) * vgap_frac
+total_height_units <- nrow_panels + (nrow_panels - 1) * vgap_frac + top_gap_frac
 
 width <- 12
 height <- width * (total_height_units / total_width_units)
