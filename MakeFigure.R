@@ -481,5 +481,5 @@ height <- width * (total_height_units / total_width_units)
 # ---- Save ----
 ggsave(paste0(output_file_name_base, ".pdf"), final_plot, width = width, height = height)
 ggsave(paste0(output_file_name_base, ".svg"), final_plot, width = width, height = height)
-ggsave(paste0(output_file_name_base, ".eps"), final_plot, width = width, height = height)
+ggsave(paste0(output_file_name_base, ".eps"), final_plot, width = width, height = height, device = cairo_ps)
 ggsave(paste0(output_file_name_base, ".tiff"), final_plot, width = width, height = height, dpi = 600, compression = "lzw")
